@@ -21,7 +21,7 @@
     ├── __init__.py
     ├── model.py # 모델 불러오기
     ├── predict.py # 예측
-    ├── preprocessing.py # 데이터 전처리
+    ├── preprocess.py # 데이터 전처리
     ├── train.py # 학습 및 평가
     └── utils.py # 공통 로직 보관
 ```
