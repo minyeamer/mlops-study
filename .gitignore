@@ -117,3 +117,7 @@ __MACOSX/
 # User temp files
 debug*.ipynb
 debug*.sh
+
+# ML Models
+xgb_model.json
+logistic_model.joblib

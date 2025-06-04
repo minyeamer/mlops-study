@@ -1,21 +1,25 @@
+from src import MODEL_DIR
+
+from xgboost import XGBClassifier
+from sklearn.linear_model import LogisticRegression
+
 from typing import Dict, Literal
 from pathlib import Path
 import json
 import os
 
 
-MODEL_DIR = Path("models")
 HYPERPARAMETER = MODEL_DIR / "hyperparameter.json"
 
 
-def get_xgboost_model(**params):
-    from xgboost import XGBClassifier
-    return XGBClassifier(**(params or select_hyperparameter(HYPERPARAMETER, model_type="xgboost")))
+def get_xgboost_model(**params) -> XGBClassifier:
+    params = params or select_hyperparameter(HYPERPARAMETER, model_type="xgboost")
+    return XGBClassifier(**params)
 
 
-def get_logistic_model(**params):
-    from sklearn.linear_model import LogisticRegression
-    return LogisticRegression(**(params or select_hyperparameter(HYPERPARAMETER, model_type="logistic")))
+def get_logistic_model(**params) -> LogisticRegression:
+    params = params or select_hyperparameter(HYPERPARAMETER, model_type="logistic")
+    return LogisticRegression(**params)
 
 
 def select_hyperparameter(file_path: Path, model_type: Literal["xgboost","logistic"]="xgboost",
