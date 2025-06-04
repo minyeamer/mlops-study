@@ -54,6 +54,18 @@ class Dataset:
         data = self._scale_numerical_features(data, fit=True)
         return data
 
+    @property
+    def transform(self, locator=slice(None)):
+        data = self[locator]
+        missing_cols = set(self.column_info["numeric"]) + set(self.column_info["categorical"]) - set(data.columns)
+        for __col in missing_cols:
+            data[__col] = None
+        data = self._drop_columns(data)
+        data = self._handle_missing_values(data)
+        data = self._encode_categorical_features(data, fit=False)
+        data = self._scale_numerical_features(data, fit=False)
+        return data
+
     def _drop_columns(self, data: pd.DataFrame) -> pd.DataFrame:
         if self.column_info["drop"] is not None:
             return data.drop(columns=self.column_info["drop"])
