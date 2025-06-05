@@ -1,9 +1,9 @@
-from src import MODEL_DIR
+from src import MODEL_DIR, BEST_MODEL
 
 from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
 
-from typing import Dict, Literal
+from typing import Dict, Literal, Union
 from pathlib import Path
 import json
 import os
@@ -11,13 +11,29 @@ import os
 
 HYPERPARAMETER = MODEL_DIR / "hyperparameter.json"
 
+Model = Union[XGBClassifier, LogisticRegression]
 
-def get_xgboost_model(**params) -> XGBClassifier:
+
+def load_model(model_type: Literal["best","xgboost","logistic"]="best", **params) -> Model:
+    if (model_type == "best") and os.path.exists(BEST_MODEL):
+        with open(BEST_MODEL, 'r', encoding="utf-8") as file:
+            info = json.loads(file.read())
+            if info["model_type"] in ("xgboost","logistic"):
+                return load_model(info["model_type"], **info["model_params"])
+            else: return load_model("xgboost")
+    elif model_type == "xgboost":
+        return load_xgboost_model(**params)
+    elif model_type == "logistic":
+        return load_logistic_model(**params)
+    else: raise ValueError(f"지원하지 않는 모델 유형입니다: \"{model_type}\"")
+
+
+def load_xgboost_model(**params) -> XGBClassifier:
     params = params or select_hyperparameter(HYPERPARAMETER, model_type="xgboost")
     return XGBClassifier(**params)
 
 
-def get_logistic_model(**params) -> LogisticRegression:
+def load_logistic_model(**params) -> LogisticRegression:
     params = params or select_hyperparameter(HYPERPARAMETER, model_type="logistic")
     return LogisticRegression(**params)
 

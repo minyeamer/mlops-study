@@ -1,0 +1,21 @@
+{
+  "model_type": "xgboost",
+  "model_path": "xgb_model.json",
+  "train_params": {
+    "label_column": "채무 불이행 여부",
+    "drop_columns": ["UID"],
+    "test_size": 0.2,
+    "random_state": 42
+  },
+  "model_params": {
+    "n_estimators": 100,
+    "max_depth": 5,
+    "learning_rate": 0.15,
+    "random_state": 42,
+    "eval_metric": "auc"
+  },
+  "metrics": {
+    "f1_score": 0.5012448132780083,
+    "auc_score": 0.7315057706827742
+  }
+}
