@@ -83,7 +83,7 @@ class Dataset:
             self.scaler = MinMaxScaler()
         else: self.scaler = None
 
-    def load_data(self) -> Tuple[pd.DataFrame,pd.DataFrame,pd.Series,pd.Series]:
+    def get_dataset(self) -> Tuple[pd.DataFrame,pd.DataFrame,pd.Series,pd.Series]:
         data = self[:,:]
         X = data.drop(columns=[self.columns.label])
         y = data[self.columns.label]
@@ -159,7 +159,7 @@ class DataLoader:
             dataset: Dataset,
             batch_size: int = 32,
             shuffle: bool = True):
-        X_train, X_val, y_train, y_val = dataset.load_data()
+        X_train, X_val, y_train, y_val = dataset.get_dataset()
         self.train_dataset = (X_train, y_train)
         self.val_dataset = (X_val, y_val)
         self.batch_size = batch_size
@@ -171,9 +171,9 @@ class DataLoader:
         toggle = {"train": "val", "val": "train"}
         try: self.split = split if split in toggle else toggle[self.split]
         except: self.split = "train"
-        self.indices = np.arange(len(self.select_dataset()[1]))
+        self.indices = np.arange(len(self.get_dataset()[1]))
 
-    def select_dataset(self) -> Tuple[pd.DataFrame,pd.Series]:
+    def get_dataset(self) -> Tuple[pd.DataFrame,pd.Series]:
         return self.train_dataset if self.split == "train" else self.val_dataset
 
     def _reset_indices(self):
@@ -186,7 +186,7 @@ class DataLoader:
         return self
 
     def __next__(self):
-        X, y = self.select_dataset()
+        X, y = self.get_dataset()
         if self.current >= len(y):
             raise StopIteration
         indices = self.indices[self.current:self.current+self.batch_size]
