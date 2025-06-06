@@ -1,4 +1,3 @@
-from calendar import c
 from typing import Callable, List, Optional, Sequence, Union
 from pandas.errors import InvalidIndexError
 import pandas as pd
@@ -17,28 +16,29 @@ def read_ncols(file_path: str, sep: str=',', encoding="utf-8") -> int:
 
 
 def read_csv(file_path: str, rows: Optional[Union[slice,Sequence[int]]]=None, cols: Optional[Union[slice,Sequence[int]]]=None,
-            sep: str=',', header: Optional[int]=0, encoding="utf-8") -> pd.DataFrame:
+            sep: str=',', header: Optional[int]=0, encoding="utf-8", **kwargs) -> pd.DataFrame:
     if rows is None:
         if cols is not None:
             cols = _slice_csv_by_cols(file_path, cols, sep, encoding) if isinstance(cols, slice) else cols
-        return pd.read_csv(file_path, sep=sep, header=header, usecols=cols, encoding=encoding)
+        return pd.read_csv(file_path, sep=sep, header=header, usecols=cols, encoding=encoding, **kwargs)
     elif isinstance(rows, slice):
-        return _read_continuous_csv_rows(file_path, rows, cols, sep, header, encoding)
+        return _read_continuous_csv_rows(file_path, rows, cols, sep, header, encoding, **kwargs)
     elif isinstance(rows, Sequence):
-        return _read_discrete_csv_rows(file_path, rows, cols, sep, header, encoding)
+        return _read_discrete_csv_rows(file_path, rows, cols, sep, header, encoding, **kwargs)
     else: raise InvalidIndexError((rows, cols))
 
 
 def _read_continuous_csv_rows(file_path: str, rows: slice, cols: Optional[Union[slice,Sequence[int]]]=None,
-                            sep: str=',', header: Optional[int]=0, encoding="utf-8") -> pd.DataFrame:
+                            sep: str=',', header: Optional[int]=0, encoding="utf-8", **kwargs) -> pd.DataFrame:
     rows = _slice_csv_by_rows(file_path, rows, header)
-    skiprows = range((header or 0), rows.start+(header or 0))
+    row_options = dict(skiprows=range((header or 0), rows.start+(header or 0)), nrows=(rows.stop-rows.start))
     cols = _slice_csv_by_cols(file_path, cols, sep, encoding) if isinstance(cols, slice) else cols
-    return pd.read_csv(file_path, sep=sep, header=header, usecols=cols, skiprows=skiprows, nrows=(rows.stop-rows.start), encoding=encoding)
+    col_options = dict(usecols=cols)
+    return pd.read_csv(file_path, sep=sep, header=header, **row_options, **col_options, encoding=encoding, **kwargs)
 
 
 def _read_discrete_csv_rows(file_path: str, rows: Sequence[int], cols: Optional[Union[slice,Sequence[int]]]=None,
-                            sep: str=',', header: Optional[int]=0, encoding="utf-8") -> pd.DataFrame:
+                            sep: str=',', header: Optional[int]=0, encoding="utf-8", **kwargs) -> pd.DataFrame:
     loc = _make_discrete_locator(cols)
     with open(file_path, 'r', encoding=encoding) as file:
         rows, header = list(), None
@@ -46,7 +46,7 @@ def _read_discrete_csv_rows(file_path: str, rows: Sequence[int], cols: Optional[
             if __i == header: header = loc(__row)
             elif __i in rows: rows.append(loc(__row))
             else: pass
-        return pd.DataFrame(rows, columns=header)
+        return pd.DataFrame(rows, columns=header, **kwargs)
 
 
 def _make_discrete_locator(cols: Optional[Union[slice,Sequence[int]]]=None) -> Callable[[List[str]],List[str]]:

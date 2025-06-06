@@ -27,7 +27,7 @@ class Columns:
         else: self.label = column
 
     def set_drop_columns(self, columns: Optional[Sequence[str]]=None, sample_data: Optional[pd.DataFrame]=None):
-        if (columns is None) and isinstance(sample_data, pd.DataFrame):
+        if (columns is not None) and isinstance(sample_data, pd.DataFrame):
             self.drop = [__col for __col in columns if __col in sample_data]
         else: self.drop = columns or list()
 
@@ -84,7 +84,7 @@ class Dataset:
         else: self.scaler = None
 
     def get_dataset(self) -> Tuple[pd.DataFrame,pd.DataFrame,pd.Series,pd.Series]:
-        data = self[:,:]
+        data = self.read()
         X = data.drop(columns=[self.columns.label])
         y = data[self.columns.label]
         X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=self.test_size, random_state=self.random_state)
@@ -147,6 +147,9 @@ class Dataset:
             return read_csv(self.file_path, *locator, **self.options)
         else: return read_csv(self.file_path, locator, **self.options)
 
+    def read(self) -> pd.DataFrame:
+        return read_csv(self.file_path, **self.options)
+
     def head(self, n: int=5) -> pd.DataFrame:
         return self[:n]
 
@@ -185,7 +188,7 @@ class DataLoader:
         self._reset_indices()
         return self
 
-    def __next__(self):
+    def __next__(self) -> Tuple[pd.DataFrame,pd.Series]:
         X, y = self.get_dataset()
         if self.current >= len(y):
             raise StopIteration
