@@ -4,6 +4,34 @@ import pandas as pd
 import csv
 
 
+###################################################################
+############################ Type Cast ############################
+###################################################################
+
+def safe_int(__object, default=None) -> int:
+    try:
+        try: return int(__object)
+        except: return int(float(__object))
+    except: return default
+
+
+def safe_float(__object, default=None) -> float:
+    try: return float(__object)
+    except: return default
+
+
+def safe_bool(__object, default=None) -> bool:
+    if isinstance(__object, str):
+        return {"true":True, "false":False}.get(__object.lower(), default)
+    else:
+        try: return bool(__object)
+        except: return default
+
+
+###################################################################
+############################# Read CSV ############################
+###################################################################
+
 def read_nrows(file_path: str, header: Optional[int]=0) -> int:
         has_header = isinstance(header, int)
         with open(file_path, "rb") as file:

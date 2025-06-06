@@ -15,9 +15,7 @@
       "colsample_bytree": 0.8,
       "gamma": 0,
       "reg_alpha": 0,
-      "reg_lambda": 2,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 2
     },
     {
       "n_estimators": 50,
@@ -27,9 +25,7 @@
       "colsample_bytree": 1.0,
       "gamma": 0.2,
       "reg_alpha": 0.1,
-      "reg_lambda": 1,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 1
     },
     {
       "n_estimators": 60,
@@ -39,9 +35,7 @@
       "colsample_bytree": 0.9,
       "gamma": 0.3,
       "reg_alpha": 0,
-      "reg_lambda": 1,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 1
     },
     {
       "n_estimators": 130,
@@ -51,9 +45,7 @@
       "colsample_bytree": 0.9,
       "gamma": 0.3,
       "reg_alpha": 0.5,
-      "reg_lambda": 3,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 3
     },
     {
       "n_estimators": 110,
@@ -63,9 +55,7 @@
       "colsample_bytree": 0.7,
       "gamma": 0,
       "reg_alpha": 0.1,
-      "reg_lambda": 3,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 3
     },
     {
       "n_estimators": 150,
@@ -75,9 +65,7 @@
       "colsample_bytree": 0.8,
       "gamma": 0.4,
       "reg_alpha": 0.5,
-      "reg_lambda": 1.5,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 1.5
     },
     {
       "n_estimators": 80,
@@ -87,9 +75,7 @@
       "colsample_bytree": 0.7,
       "gamma": 0.2,
       "reg_alpha": 0.1,
-      "reg_lambda": 1,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 1
     },
     {
       "n_estimators": 130,
@@ -99,9 +85,7 @@
       "colsample_bytree": 0.9,
       "gamma": 0.2,
       "reg_alpha": 1,
-      "reg_lambda": 3,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 3
     },
     {
       "n_estimators": 130,
@@ -111,9 +95,7 @@
       "colsample_bytree": 0.8,
       "gamma": 0.2,
       "reg_alpha": 0.5,
-      "reg_lambda": 3,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 3
     },
     {
       "n_estimators": 110,
@@ -123,9 +105,7 @@
       "colsample_bytree": 0.7,
       "gamma": 0,
       "reg_alpha": 1,
-      "reg_lambda": 2,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 2
     },
     {
       "n_estimators": 190,
@@ -135,9 +115,7 @@
       "colsample_bytree": 0.7,
       "gamma": 0,
       "reg_alpha": 0.1,
-      "reg_lambda": 3,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 3
     },
     {
       "n_estimators": 120,
@@ -147,9 +125,7 @@
       "colsample_bytree": 1.0,
       "gamma": 0,
       "reg_alpha": 0.1,
-      "reg_lambda": 1.5,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 1.5
     },
     {
       "n_estimators": 90,
@@ -159,9 +135,7 @@
       "colsample_bytree": 0.9,
       "gamma": 0.1,
       "reg_alpha": 0.5,
-      "reg_lambda": 1,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 1
     },
     {
       "n_estimators": 130,
@@ -171,9 +145,7 @@
       "colsample_bytree": 0.8,
       "gamma": 0.1,
       "reg_alpha": 0,
-      "reg_lambda": 1,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 1
     },
     {
       "n_estimators": 80,
@@ -183,9 +155,7 @@
       "colsample_bytree": 0.9,
       "gamma": 0,
       "reg_alpha": 1,
-      "reg_lambda": 1.5,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 1.5
     },
     {
       "n_estimators": 190,
@@ -195,9 +165,7 @@
       "colsample_bytree": 1.0,
       "gamma": 0.4,
       "reg_alpha": 0.1,
-      "reg_lambda": 1,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 1
     },
     {
       "n_estimators": 190,
@@ -207,9 +175,7 @@
       "colsample_bytree": 0.6,
       "gamma": 0.4,
       "reg_alpha": 1,
-      "reg_lambda": 1.5,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 1.5
     },
     {
       "n_estimators": 170,
@@ -219,9 +185,7 @@
       "colsample_bytree": 0.6,
       "gamma": 0.4,
       "reg_alpha": 0.5,
-      "reg_lambda": 3,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 3
     },
     {
       "n_estimators": 80,
@@ -231,9 +195,7 @@
       "colsample_bytree": 0.8,
       "gamma": 0.1,
       "reg_alpha": 0.1,
-      "reg_lambda": 2,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 2
     },
     {
       "n_estimators": 120,
@@ -243,17 +205,15 @@
       "colsample_bytree": 1.0,
       "gamma": 0.1,
       "reg_alpha": 0.5,
-      "reg_lambda": 2,
-      "random_state": 42,
-      "eval_metric": "auc"
+      "reg_lambda": 2
     }
   ],
   "logistic": [
     {
       "C": 1.0,
-      "random_state": 42,
       "max_iter": 1000,
-      "class_weight": "balanced"
+      "class_weight": "balanced",
+      "random_state": 42
     },
     {
       "penalty": "none",
@@ -263,8 +223,7 @@
       "C": 10,
       "fit_intercept": false,
       "solver": "newton-cg",
-      "max_iter": 100,
-      "random_state": 42
+      "max_iter": 100
     },
     {
       "penalty": "elasticnet",
@@ -274,8 +233,7 @@
       "C": 100,
       "fit_intercept": false,
       "solver": "saga",
-      "max_iter": 200,
-      "random_state": 42
+      "max_iter": 200
     },
     {
       "penalty": "l1",
@@ -285,8 +243,7 @@
       "C": 0.01,
       "fit_intercept": false,
       "solver": "saga",
-      "max_iter": 400,
-      "random_state": 42
+      "max_iter": 400
     },
     {
       "penalty": "l1",
@@ -296,8 +253,7 @@
       "C": 1,
       "fit_intercept": false,
       "solver": "liblinear",
-      "max_iter": 400,
-      "random_state": 42
+      "max_iter": 400
     },
     {
       "penalty": "none",
@@ -307,8 +263,7 @@
       "C": 1,
       "fit_intercept": true,
       "solver": "lbfgs",
-      "max_iter": 400,
-      "random_state": 42
+      "max_iter": 400
     },
     {
       "penalty": "l2",
@@ -318,8 +273,7 @@
       "C": 100,
       "fit_intercept": false,
       "solver": "sag",
-      "max_iter": 400,
-      "random_state": 42
+      "max_iter": 400
     },
     {
       "penalty": "elasticnet",
@@ -329,8 +283,7 @@
       "C": 0.1,
       "fit_intercept": true,
       "solver": "saga",
-      "max_iter": 100,
-      "random_state": 42
+      "max_iter": 100
     },
     {
       "penalty": "l1",
@@ -340,8 +293,7 @@
       "C": 1,
       "fit_intercept": true,
       "solver": "liblinear",
-      "max_iter": 200,
-      "random_state": 42
+      "max_iter": 200
     },
     {
       "penalty": "none",
@@ -351,8 +303,7 @@
       "C": 1,
       "fit_intercept": false,
       "solver": "saga",
-      "max_iter": 500,
-      "random_state": 42
+      "max_iter": 500
     },
     {
       "penalty": "l2",
@@ -362,8 +313,7 @@
       "C": 0.01,
       "fit_intercept": false,
       "solver": "liblinear",
-      "max_iter": 300,
-      "random_state": 42
+      "max_iter": 300
     },
     {
       "penalty": "none",
@@ -373,8 +323,7 @@
       "C": 0.1,
       "fit_intercept": true,
       "solver": "lbfgs",
-      "max_iter": 100,
-      "random_state": 42
+      "max_iter": 100
     },
     {
       "penalty": "none",
@@ -384,8 +333,7 @@
       "C": 0.1,
       "fit_intercept": false,
       "solver": "lbfgs",
-      "max_iter": 200,
-      "random_state": 42
+      "max_iter": 200
     },
     {
       "penalty": "l1",
@@ -395,8 +343,7 @@
       "C": 10,
       "fit_intercept": false,
       "solver": "liblinear",
-      "max_iter": 300,
-      "random_state": 42
+      "max_iter": 300
     },
     {
       "penalty": "l1",
@@ -406,8 +353,7 @@
       "C": 0.01,
       "fit_intercept": false,
       "solver": "liblinear",
-      "max_iter": 400,
-      "random_state": 42
+      "max_iter": 400
     },
     {
       "penalty": "none",
@@ -417,8 +363,7 @@
       "C": 0.01,
       "fit_intercept": true,
       "solver": "sag",
-      "max_iter": 500,
-      "random_state": 42
+      "max_iter": 500
     },
     {
       "penalty": "elasticnet",
@@ -428,8 +373,7 @@
       "C": 0.01,
       "fit_intercept": true,
       "solver": "saga",
-      "max_iter": 400,
-      "random_state": 42
+      "max_iter": 400
     },
     {
       "penalty": "l1",
@@ -439,8 +383,7 @@
       "C": 100,
       "fit_intercept": false,
       "solver": "liblinear",
-      "max_iter": 300,
-      "random_state": 42
+      "max_iter": 300
     },
     {
       "penalty": "none",
@@ -450,8 +393,7 @@
       "C": 0.01,
       "fit_intercept": true,
       "solver": "saga",
-      "max_iter": 400,
-      "random_state": 42
+      "max_iter": 400
     },
     {
       "penalty": "l2",
@@ -461,8 +403,7 @@
       "C": 100,
       "fit_intercept": true,
       "solver": "saga",
-      "max_iter": 300,
-      "random_state": 42
+      "max_iter": 300
     },
     {
       "penalty": "elasticnet",
@@ -472,8 +413,7 @@
       "C": 100,
       "fit_intercept": false,
       "solver": "saga",
-      "max_iter": 400,
-      "random_state": 42
+      "max_iter": 400
     }
   ]
 }

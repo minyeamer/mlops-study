@@ -1,6 +1,6 @@
 {
   "model_type": "xgboost",
-  "model_path": "xgb_model.json",
+  "model_path": "models/xgb_model.json",
   "train_params": {
     "label_column": "채무 불이행 여부",
     "drop_columns": ["UID"],

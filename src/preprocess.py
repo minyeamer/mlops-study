@@ -1,3 +1,4 @@
+from src import RANDOM_STATE
 from src.utils import read_nrows, read_csv
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OrdinalEncoder
@@ -49,7 +50,8 @@ class Options(dict):
             sep: str = ',',
             header: Optional[int] = 0,
             encoding = "utf-8",
-            **kwargs):
+            **kwargs
+        ):
         super().__init__(sep=sep, header=header, encoding=encoding, **kwargs)
 
 
@@ -62,7 +64,7 @@ class Dataset:
             categorical_columns: Optional[Sequence[str]] = None,
             scaler: Optional[Literal["Standard","MinMax"]] = "Standard",
             test_size: float = 0.2,
-            random_state: int = 42,
+            random_state: int = RANDOM_STATE,
             sep: str = ',',
             header: Optional[int] = 0,
             encoding = "utf-8",
@@ -160,7 +162,7 @@ class Dataset:
 class DataLoader:
     def __init__(self,
             dataset: Dataset,
-            batch_size: int = 32,
+            batch_size: int = 128,
             shuffle: bool = True):
         X_train, X_val, y_train, y_val = dataset.get_dataset()
         self.train_dataset = (X_train, y_train)
