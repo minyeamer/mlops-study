@@ -1,6 +1,6 @@
 from src import DATA_DIR, MODEL_DIR, BEST_MODEL, RANDOM_STATE
 from src.preprocess import Dataset, DataLoader
-from src.model import Model, load_model
+from src.model import Model, load_model_info
 from src.utils import safe_int, safe_float, safe_bool
 
 from xgboost import XGBClassifier
@@ -8,10 +8,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, roc_auc_score
 import joblib
 import json
+import pandas as pd
 
 from typing import Any, Dict, Literal, Tuple
+from pathlib import Path
 import argparse
-import pandas as pd
 
 
 DEFAULT_TRAIN_PRAMS = {
@@ -31,84 +32,100 @@ DEFAULT_MODEL_PARAMS = {
 }
 
 
-def train(dataset: Dataset, model: Model, epoch: int=1, batch_size: int=128, shuffle=True, **kwargs):
+###################################################################
+############################## Train ##############################
+###################################################################
+
+
+def train(dataset: Dataset, model: Model, model_type: Literal["xgboost","logistic"]="xgboost",
+        epoch: int=1, batch_size: int=128, shuffle=True, **kwargs) -> Dict[str,float]:
     data_loader = DataLoader(dataset, batch_size, shuffle)
-    for __epoch in range(epoch):
-        for __i, (__xb, __yb) in enumerate(data_loader):
-            print(f"Epoch: {__epoch}, Batch: {__i}, Size: {len(__yb)}")
-            model.fit(__xb, __yb)
-
-#     if model_type == "xgboost":
-#         model = train_xgboost(X_train, X_val, y_train, y_val)
-#     elif model_type == "logistic":
-#         model = train_logistic(X_train, X_val, y_train, y_val)
-#     else:
-#         raise ValueError(f"Unknown model type: \"{model_type}\"")
-
-#     print(f"\nEvaluating \"{model_type}\" model:")
-#     metrics = evaluate_model(model, X_val, y_val)
-#     save_metrics(metrics, model_type)
-
-#     best_model_type = get_best_model_type()
-#     with open(MODEL_DIR / "best_model.txt", 'w') as f:
-#         f.write(best_model_type)
+    # for __epoch in range(epoch):
+    #     for __i, (__xb, __yb) in enumerate(data_loader):
+    #         print(f"Epoch: {__epoch}, Batch: {__i}, Size: {len(__yb)}")
+    X_train, X_val, y_train, y_val = data_loader.get_all_dataset()
+    if model_type == "xgboost":
+        return train_xgboost(model, X_train, X_val, y_train, y_val)
+    elif model_type == "logistic":
+        return train_logistic(model, X_train, X_val, y_train, y_val)
+    else: raise ValueError(f"지원하지 않는 모델 유형입니다: \"{model_type}\"")
 
 
-
-# def train_xgboost(X_train: pd.DataFrame, X_val: pd.DataFrame, y_train: pd.Series, y_val: pd.Series) -> XGBClassifier:
-#     model = load_xgboost_model()
-#     eval_set = [(X_train, y_train), (X_val, y_val)]
-#     model.fit(X_train, y_train, eval_set=eval_set, verbose=False)
-#     model.save_model(MODEL_DIR / "xgb_model.json")
-#     return model
+def train_xgboost(model: XGBClassifier,
+                X_train: pd.DataFrame, X_val: pd.DataFrame, y_train: pd.Series, y_val: pd.Series) -> Dict[str,float]:
+    eval_set = [(X_train, y_train), (X_val, y_val)]
+    model.fit(X_train, y_train, eval_set=eval_set, verbose=False)
+    return evaluate(model, X_val, y_val)
 
 
-# def train_logistic(X_train: pd.DataFrame, X_val: pd.DataFrame, y_train: pd.Series, y_val: pd.Series) -> LogisticRegression:
-#     model = load_logistic_model()
-#     model.fit(X_train, y_train)
-#     joblib.dump(model, MODEL_DIR / "logistic_model.joblib")
-#     return model
+def train_logistic(model: LogisticRegression,
+                X_train: pd.DataFrame, X_val: pd.DataFrame, y_train: pd.Series, y_val: pd.Series) -> Dict[str,float]:
+    model.fit(X_train, y_train)
+    return evaluate(model, X_val, y_val)
 
 
-# def save_metrics(metrics, model_type: Literal["xgboost","logistic"]):
-#     metrics_file = MODEL_DIR / "model_metrics.json"
-#     if metrics_file.exists():
-#         with open(metrics_file, 'r') as f:
-#             all_metrics = json.load(f)
-#     else:
-#         all_metrics = {}
-
-#     all_metrics[model_type] = metrics
-
-#     with open(metrics_file, 'w') as f:
-#         json.dump(all_metrics, f, indent=4)
+def evaluate(model: Model, X_val: pd.DataFrame, y_val: pd.Series) -> Dict[str,float]:
+    y_pred = model.predict(X_val)
+    f1 = f1_score(y_val, y_pred)
+    auc = roc_auc_score(y_val, model.predict_proba(X_val)[:,1])
+    print("F1 Score:", f1)
+    print("AUC Score:", auc)
+    return dict(f1_score=f1, auc_score=auc)
 
 
-# def evaluate_model(model: Model, X_val: pd.DataFrame, y_val: pd.Series) -> Dict[str,float]:
-#     y_pred = model.predict(X_val)
-#     f1 = f1_score(y_val, y_pred)
-#     auc = roc_auc_score(y_val, model.predict_proba(X_val)[:, 1])
+###################################################################
+############################### Save ##############################
+###################################################################
 
-#     print("F1 Score:", f1)
-#     print("AUC Score:", auc)
-
-#     return {
-#         "f1_score": f1,
-#         "auc_score": auc
-#     }
+XGBOOST_MODEL = MODEL_DIR / "xgb_model.json"
+LOGISTIC_MODEL = MODEL_DIR / "logistic_model.joblib"
 
 
-# def get_best_model_type() -> Model:
-#     metrics_file = MODEL_DIR / "model_metrics.json"
-#     if not metrics_file.exists():
-#         return "xgboost"
+def save_model(model: Model, metrics: Dict[str,float], model_type: Literal["xgboost","logistic"]="xgboost",
+            save_mode: Literal["best_only","overwrite","primary"]="best_only", **kwargs) -> Dict:
+    model_path = get_default_model_path(model_type)
+    is_best = is_best_model(metrics["auc_score"])
 
-#     with open(metrics_file, 'r') as f:
-#         metrics = json.load(f)
+    if (save_mode == "primary") and not model_path.exists():
+        save = True
+    elif (save_mode == "overwrite") or ((save_mode == "best_only") and is_best):
+        save = True
+    else: save = False
 
-#     best_model = max(metrics.items(), key=lambda x: x[1]['auc_score'])
-#     return best_model[0]
+    if save:
+        if model_type == "xgboost":
+            save_xgboost(model, model_path)
+        else: save_logistic(model, model_path)
+    return dict(model_path=model_path, is_best=is_best, is_saved=save)
 
+
+def save_xgboost(model: XGBClassifier, save_to: Path):
+    model.save_model(save_to)
+    print("XGBClassifier 모델의 파라미터를 업데이트했습니다.")
+
+
+def save_logistic(model: LogisticRegression, save_to: Path):
+    joblib.dump(model, save_to)
+    print("LogisticRegression 모델의 파라미터를 업데이트했습니다.")
+
+
+def get_default_model_path(model_type: Literal["xgboost","logistic"]="xgboost") -> Path:
+    if model_type == "xgboost":
+        return XGBOOST_MODEL
+    elif model_type == "logistic":
+        return LOGISTIC_MODEL
+    else: raise ValueError(f"지원하지 않는 모델 유형입니다: \"{model_type}\"")
+
+
+def is_best_model(auc_score: float) -> bool:
+    if BEST_MODEL.exists():
+        with open(BEST_MODEL, 'r', encoding="utf-8") as file:
+            best_score = json.loads(file.read())["metrics"]["auc_score"]
+            is_best = auc_score > best_score
+            if is_best:
+                print(f"AUC Score가 갱신되었습니다: {round(best_score,5)} > {round(auc_score,5)}")
+            return is_best
+    else: return True
 
 
 ###################################################################
@@ -142,28 +159,24 @@ class ModelOptions(dict):
     def __init__(self,
             model_type: str,
             model_path: str = str(),
-            model_params: str = str(),
-            random_state: str = str(RANDOM_STATE),
-            verbose: str = "0"
+            model_params: str = str()
         ):
         super().__init__(
             model_type = (model_type if model_type.lower() in ("best","xgboost","logistic") else "best"),
             model_path = (model_path.format(MODEL_DIR=MODEL_DIR) if "{MODEL_DIR}" in model_path else model_path),
-            model_params = (_parse_params(model_params, cast=True) if model_params else dict()),
-            random_state = safe_int(random_state, default=RANDOM_STATE),
-            verbose = safe_int(verbose, default=0)
+            model_params = (_parse_params(model_params, cast=True) if model_params else dict())
         )
 
 
 class TrainOptions(dict):
     def __init__(self,
             epoch: str = "1",
-            batch_size: str = "32",
+            batch_size: str = "128",
             shuffle: str = "true"
         ):
         super().__init__(
             epoch = safe_int(epoch, default=1),
-            batch_size = safe_int(batch_size, default=32),
+            batch_size = safe_int(batch_size, default=128),
             shuffle = safe_bool(shuffle, default=True)
         )
 
@@ -193,10 +206,26 @@ def _parse_params(params: str, cast=False) -> Dict:
     return dict(filter(None, [type_cast(*__kv.split('=', maxsplit=1)) for __kv in params.split('&')]))
 
 
+def save_best_options(data_options: Dict, model_options: Dict, train_options: Dict, metrics: Dict):
+    with open(BEST_MODEL, 'w', encoding="utf-8") as file:
+        options = dict(
+            data_options = data_options,
+            model_options = model_options,
+            train_options = train_options,
+            metrics = metrics
+        )
+        json.dump(options, file, indent=2, ensure_ascii=False)
+
+
 def main(data_options: Dict, model_options: Dict, train_options: Dict):
     dataset = Dataset(**data_options)
-    model = load_model(**model_options)
-    train(dataset, model, **train_options)
+    model_info = load_model_info(**model_options)
+    model, model_options = model_info["model"], model_info["options"]
+    metrics = train(dataset, model, model_options["model_type"], **train_options)
+    status = save_model(model, metrics, model_options["model_type"], **train_options)
+    if status["is_best"] and status["is_saved"]:
+        model_options["model_path"] = str(status["model_path"])
+        save_best_options(data_options, model_options, train_options, metrics)
 
 
 if __name__ == "__main__":

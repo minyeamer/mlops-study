@@ -1,14 +1,16 @@
 #!/bin/bash
 
-epoch="1"
-batch_size="128"
+epoch=""
+batch_size=""
 shuffle="true"
+save_mode="best_only"
 
 train_selection=$(cat <<EOF
 모델 학습 조건을 입력하시겠습니까? (기본값 안내)
   Epoch: $epoch
   Batch Size: $batch_size
   Shuffle: $shuffle
+  저장 방식: $save_mode
 [y/n] 
 EOF
 )
@@ -27,6 +29,10 @@ if [[ "$set_data_yn" ==  "y" || "$set_data_yn" ==  "Y" ]]; then
     read -p "Shuffle ($shuffle): " user_input
     if [ -n "$user_input" ]; then
         shuffle="$user_input"
+    fi
+    read -p "저장 방식 ($save_mode): " user_input
+    if [ -n "$user_input" ]; then
+        save_mode="$user_input"
     fi
 fi
 

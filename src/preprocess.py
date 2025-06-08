@@ -163,7 +163,8 @@ class DataLoader:
     def __init__(self,
             dataset: Dataset,
             batch_size: int = 128,
-            shuffle: bool = True):
+            shuffle: bool = True
+        ):
         X_train, X_val, y_train, y_val = dataset.get_dataset()
         self.train_dataset = (X_train, y_train)
         self.val_dataset = (X_val, y_val)
@@ -180,6 +181,11 @@ class DataLoader:
 
     def get_dataset(self) -> Tuple[pd.DataFrame,pd.Series]:
         return self.train_dataset if self.split == "train" else self.val_dataset
+
+    def get_all_dataset(self) -> Tuple[pd.DataFrame,pd.DataFrame,pd.Series,pd.Series]:
+        X_train, y_train = self.train_dataset
+        X_val, y_val = self.val_dataset
+        return X_train, X_val, y_train, y_val
 
     def _reset_indices(self):
         if self.shuffle:

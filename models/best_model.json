@@ -1,18 +1,31 @@
 {
-  "model_type": "xgboost",
-  "model_path": "models/xgb_model.json",
-  "train_params": {
+  "data_options": {
+    "file_path": "data/train.csv",
     "label_column": "채무 불이행 여부",
-    "drop_columns": ["UID"],
+    "drop_columns": [
+      "UID"
+    ],
+    "numeric_columns": null,
+    "categorical_columns": null,
+    "scaler": "Standard",
     "test_size": 0.2,
     "random_state": 42
   },
-  "model_params": {
-    "n_estimators": 100,
-    "max_depth": 5,
-    "learning_rate": 0.15,
-    "random_state": 42,
-    "eval_metric": "auc"
+  "model_options": {
+    "model_type": "xgboost",
+    "model_path": "models/xgb_model.json",
+    "model_params": {
+      "n_estimators": 100,
+      "max_depth": 5,
+      "learning_rate": 0.15,
+      "random_state": 42,
+      "eval_metric": "auc"
+    }
+  },
+  "train_options": {
+    "epoch": 1,
+    "batch_size": 128,
+    "shuffle": true
   },
   "metrics": {
     "f1_score": 0.5012448132780083,

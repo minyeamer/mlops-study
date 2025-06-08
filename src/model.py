@@ -15,36 +15,55 @@ HYPERPARAMETER = MODEL_DIR / "hyperparameter.json"
 Model = Union[XGBClassifier, LogisticRegression]
 
 
-def load_model(model_type: Literal["best","xgboost","logistic"]="best", model_path=str(), **params) -> Model:
+def load_model(model_type: Literal["best","xgboost","logistic"]="best", model_path=str(), model_params: Dict=dict()) -> Model:
+    return load_model_info(model_type, model_path, model_params)["model"]
+
+
+def load_model_info(model_type: Literal["best","xgboost","logistic"]="best", model_path=str(), model_params: Dict=dict()) -> Dict:
+    options = dict(model_type=model_type, model_path=model_path, model_params=model_params)
     if (model_type.lower() == "best") and os.path.exists(BEST_MODEL):
-        with open(BEST_MODEL, 'r', encoding="utf-8") as file:
-            info = json.loads(file.read())
-            if info["model_type"] in ("xgboost","logistic"):
-                return load_model(info["model_type"], info["model_path"], **info["model_params"])
-            else: return load_model("xgboost")
+        return _load_best_model()
     elif model_type.lower() == "xgboost":
-        return load_xgboost_model(model_path, **params)
+        params = _get_xgboost_params(**model_params)
+        return dict(model=load_xgboost_model(model_path, **params), options=dict(options, model_params=params))
     elif model_type.lower() == "logistic":
-        return load_logistic_model(model_path, **params)
+        params = _get_logistic_params(**model_params)
+        return dict(model=load_logistic_model(model_path, **params), options=dict(options, model_params=params))
     else: raise ValueError(f"지원하지 않는 모델 유형입니다: \"{model_type}\"")
 
 
-def load_xgboost_model(model_path=str(), random_state: int=RANDOM_STATE, eval_metric="auc", verbose=0, **params) -> XGBClassifier:
-    params = params or select_hyperparameter(HYPERPARAMETER, model_type="xgboost")
-    params.update(random_state=random_state, eval_metric=eval_metric, verbosity=min(verbose,3))
+def _load_best_model() -> Dict:
+    if os.path.exists(BEST_MODEL):
+        with open(BEST_MODEL, 'r', encoding="utf-8") as file:
+            options = json.loads(file.read())["model_options"]
+            if options["model_type"] in ("xgboost","logistic"):
+                return load_model_info(**options)
+            else: return load_model_info("xgboost")
+    else: raise ValueError("모델이 존재하지 않습니다.")
+
+
+def load_xgboost_model(model_path=str(), **params) -> XGBClassifier:
     model = XGBClassifier(**params)
     if model_path and os.path.exists(model_path):
         model.load_model(model_path)
     return model
 
 
-def load_logistic_model(model_path=str(), random_state: int=RANDOM_STATE, verbose=0, **params) -> LogisticRegression:
+def _get_xgboost_params(random_state: int=RANDOM_STATE, eval_metric="auc", **params) -> Dict:
+    params = params or select_hyperparameter(HYPERPARAMETER, model_type="xgboost")
+    return dict(params, random_state=random_state, eval_metric=eval_metric)
+
+
+def load_logistic_model(model_path=str(), **params) -> LogisticRegression:
     if model_path and os.path.exists(model_path):
         return joblib.load(model_path)
     else:
-        params = params or select_hyperparameter(HYPERPARAMETER, model_type="logistic", verbose=max(verbose,1))
-        params.update(random_state=random_state)
         return LogisticRegression(**params)
+
+
+def _get_logistic_params(random_state: int=RANDOM_STATE, **params) -> Dict:
+    params = params or select_hyperparameter(HYPERPARAMETER, model_type="xgboost")
+    return dict(params, random_state=random_state)
 
 
 def select_hyperparameter(file_path: Path, model_type: Literal["xgboost","logistic"]="xgboost",
