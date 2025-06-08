@@ -118,6 +118,11 @@ __MACOSX/
 debug*.ipynb
 debug*.sh
 
+# Preprocessor
+ordinal_encoder.joblib
+standard_scaler.joblib
+minmax_scaler.joblib
+
 # ML Models
 xgb_model.json
 logistic_model.joblib

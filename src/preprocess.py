@@ -1,4 +1,4 @@
-from src import RANDOM_STATE
+from src import MODEL_DIR, RANDOM_STATE
 from src.utils import read_nrows, read_csv
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, OrdinalEncoder
@@ -8,11 +8,12 @@ import pandas as pd
 
 from typing import Literal, Optional, Sequence, Tuple
 from pathlib import Path
+import joblib
 
 
 class Columns:
     def __init__(self,
-            label: str,
+            label: Optional[str] = None,
             drop: Optional[Sequence[str]] = None,
             numeric: Optional[Sequence[str]] = None,
             categorical: Optional[Sequence[str]] = None,
@@ -22,8 +23,8 @@ class Columns:
         self.set_numeric_columns(numeric, sample_data)
         self.set_categorical_columns(categorical, sample_data)
 
-    def set_label_column(self, column: str, sample_data: Optional[pd.DataFrame]=None):
-        if (isinstance(sample_data, pd.DataFrame) and (column not in sample_data)) or (not column):
+    def set_label_column(self, column: Optional[str]=None, sample_data: Optional[pd.DataFrame]=None):
+        if (column is not None) and isinstance(sample_data, pd.DataFrame) and (column not in sample_data):
             raise KeyError(str(column))
         else: self.label = column
 
@@ -58,7 +59,7 @@ class Options(dict):
 class Dataset:
     def __init__(self,
             file_path: Path,
-            label_column: str,
+            label_column: Optional[str] = None,
             drop_columns: Optional[Sequence[str]] = None,
             numeric_columns: Optional[Sequence[str]] = None,
             categorical_columns: Optional[Sequence[str]] = None,
@@ -129,6 +130,7 @@ class Dataset:
         if self.columns.categorical and (self.encoder is not None):
             if fit:
                 data[self.columns.categorical] = self.encoder.fit_transform(data[self.columns.categorical])
+                self.save_encoder()
             else:
                 data[self.columns.categorical] = self.encoder.transform(data[self.columns.categorical])
         return data
@@ -137,9 +139,25 @@ class Dataset:
         if self.columns.numeric and (self.scaler is not None):
             if fit:
                 data[self.columns.numeric] = self.scaler.fit_transform(data[self.columns.numeric])
+                self.save_scaler()
             else:
                 data[self.columns.numeric] = self.scaler.transform(data[self.columns.numeric])
         return data
+
+    def save_encoder(self):
+        joblib.dump(self.encoder, MODEL_DIR / "ordinal_encoder.joblib")
+
+    def load_encoder(self):
+        self.encoder = joblib.load(MODEL_DIR / "ordinal_encoder.joblib")
+
+    def save_scaler(self):
+        prefix = "minmax" if isinstance(self.scaler, MinMaxScaler) else "standard"
+        joblib.dump(self.scaler, MODEL_DIR / f"{prefix}_scaler.joblib")
+
+    def load_scaler(self, scaler: Optional[Literal["Standard","MinMax"]] = "Standard"):
+        if scaler.lower() not in ("standard","minmax"):
+            scaler = "minmax" if isinstance(self.scaler, MinMaxScaler) else "standard"
+        self.scaler = joblib.load(MODEL_DIR / f"{scaler}_scaler.joblib")
 
     def __len__(self) -> int:
         return read_nrows(self.file_path, self.options.get("header"))
