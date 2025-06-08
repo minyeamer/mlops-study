@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Sequence, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 from pandas.errors import InvalidIndexError
 import pandas as pd
 import csv
@@ -26,6 +26,21 @@ def safe_bool(__object, default=None) -> bool:
     else:
         try: return bool(__object)
         except: return default
+
+
+###################################################################
+########################### Parse Params ##########################
+###################################################################
+
+def parse_params(params: str, cast=False) -> Dict:
+    def type_cast(key: str, value: str) -> Tuple[str,Any]:
+        if cast:
+            for safe_cast in [safe_int, safe_float, safe_bool]:
+                __value = safe_cast(value, default=None)
+                if __value is not None:
+                    return key, __value
+        return key, value
+    return dict(filter(None, [type_cast(*__kv.split('=', maxsplit=1)) for __kv in params.split('&')]))
 
 
 ###################################################################

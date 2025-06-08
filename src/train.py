@@ -1,7 +1,7 @@
 from src import DATA_DIR, MODEL_DIR, BEST_MODEL, RANDOM_STATE
 from src.preprocess import Dataset, DataLoader
 from src.model import Model, load_model_info
-from src.utils import safe_int, safe_float, safe_bool
+from src.utils import safe_int, safe_float, safe_bool, parse_params
 
 from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
@@ -164,7 +164,7 @@ class ModelOptions(dict):
         super().__init__(
             model_type = (model_type if model_type.lower() in ("best","xgboost","logistic") else "best"),
             model_path = (model_path.format(MODEL_DIR=MODEL_DIR) if "{MODEL_DIR}" in model_path else model_path),
-            model_params = (_parse_params(model_params, cast=True) if model_params else dict())
+            model_params = (parse_params(model_params, cast=True) if model_params else dict())
         )
 
 
@@ -189,21 +189,10 @@ def _parse_args() -> Dict[str,Dict]:
 
     args = parser.parse_args()
     return dict(
-        data_options=DataOptions(**_parse_params(args.data, cast=False)),
-        model_options=ModelOptions(**_parse_params(args.model, cast=False)),
-        train_options=TrainOptions(**_parse_params(args.train, cast=False))
+        data_options=DataOptions(**parse_params(args.data, cast=False)),
+        model_options=ModelOptions(**parse_params(args.model, cast=False)),
+        train_options=TrainOptions(**parse_params(args.train, cast=False))
     )
-
-
-def _parse_params(params: str, cast=False) -> Dict:
-    def type_cast(key: str, value: str) -> Tuple[str,Any]:
-        if cast:
-            for safe_cast in [safe_int, safe_float, safe_bool]:
-                __value = safe_cast(value, default=None)
-                if __value is not None:
-                    return key, __value
-        return key, value
-    return dict(filter(None, [type_cast(*__kv.split('=', maxsplit=1)) for __kv in params.split('&')]))
 
 
 def save_best_options(data_options: Dict, model_options: Dict, train_options: Dict, metrics: Dict):
