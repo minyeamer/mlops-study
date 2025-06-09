@@ -10,7 +10,7 @@ test_size="0.2"
 random_state="42"
 
 data_selection=$(cat <<EOF
-데이터 경로 및 전처리 옵션을 입력하시겠습니까? (기본값 안내)
+학습 데이터 경로 및 전처리 옵션을 입력하시겠습니까? (기본값 안내)
   파일 경로: $file_path
   종속 변수: $label_column
   제거할 열: $drop_columns
@@ -23,7 +23,7 @@ read -p "${data_selection}" set_data_yn
 if [[ "$set_data_yn" ==  "y" || "$set_data_yn" ==  "Y" ]]; then
     echo "옵션을 입력해주세요. (아무것도 입력하지 않으면 괄호 안 기본값이 적용됩니다)"
     read -p "파일 경로 ($file_path): " user_input
-    if [ -n "$user_input" ]; then
+    if [ -f "$user_input" ]; then
         file_path="$user_input"
     fi
     read -p "종속 변수 ($label_column): " user_input

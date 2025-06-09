@@ -57,18 +57,19 @@ def _parse_args() -> Dict[str,Dict]:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", type=str, required=True, help="데이터 전처리 옵션")
     parser.add_argument("--model", type=str, required=True, help="모델 초기화 옵션")
-    parser.add_argument("--return_type", type=str, required=False, help="예측 결과 유형", default="label")
     parser.add_argument("--save_to", type=str, required=False, help="예측 파일 저장", default=str())
+    parser.add_argument("--return_type", type=str, required=False, help="예측 결과 유형", default="label")
 
     args = parser.parse_args()
     return dict(
         data_options=DataOptions(**parse_params(args.data, cast=False)),
         model_options=ModelOptions(**parse_params(args.model, cast=False)),
-        save_to=args.save
+        save_to=(args.save_to.format(DATA_DIR=DATA_DIR) if "{DATA_DIR}" in args.save_to else args.save_to),
+        return_type=args.return_type
     )
 
 
-def main(data_options: Dict, model_options: Dict, return_type: Literal["label","proba"]="label", save_to=str()) -> pd.DataFrame:
+def main(data_options: Dict, model_options: Dict, save_to=str(), return_type: Literal["label","proba"]="label") -> pd.DataFrame:
     dataset = Dataset(**data_options)
     dataset.load_encoder()
     dataset.load_scaler()
@@ -76,6 +77,7 @@ def main(data_options: Dict, model_options: Dict, return_type: Literal["label","
     preds = predict(dataset, model, return_type)
     if save_to:
         preds.to_csv(save_to, index=False)
+        print(f"예측 결과가 \"{save_to}\" 경로에 저장되었습니다.")
     return preds
 
 
