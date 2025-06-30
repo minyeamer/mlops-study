@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source setup.sh
+# source setup.sh
 
 # 함수 정의: 모델 학습
 train_model() {
