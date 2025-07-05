@@ -157,7 +157,7 @@ class Dataset:
     def load_scaler(self, scaler: Optional[Literal["Standard","MinMax"]] = "Standard"):
         if scaler.lower() not in ("standard","minmax"):
             scaler = "minmax" if isinstance(self.scaler, MinMaxScaler) else "standard"
-        self.scaler = joblib.load(MODEL_DIR / f"{scaler}_scaler.joblib")
+        self.scaler = joblib.load(MODEL_DIR / f"{scaler.lower()}_scaler.joblib")
 
     def __len__(self) -> int:
         return read_nrows(self.file_path, self.options.get("header"))

@@ -88,14 +88,12 @@ venv/
 # VS Code
 .vscode/
 
-# input data, saved log, checkpoints
-debug/
-input/
+# ML Models
+data/
 models/
-saved/
-datasets/
-.images/
 
 # User temp files
+.images/
+.DS_Store
 debug*.ipynb
 debug*.sh

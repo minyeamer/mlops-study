@@ -1,0 +1,8 @@
+services:
+  mlops:
+    image: mlops:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      - ${WORKSPACE_FOLDER}/data:/app/data
+      - ${WORKSPACE_FOLDER}/models:/app/models
